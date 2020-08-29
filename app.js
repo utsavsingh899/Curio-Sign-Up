@@ -6,6 +6,17 @@ const https = require("https");
 
 const app = express();
 
+// heroku http -> https 
+// link: https://jaketrent.com/post/https-redirect-node-heroku/
+if(process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.header('x-forwarded-proto') !== 'https')
+      res.redirect(`https://${req.header('host')}${req.url}`)
+    else
+      next()
+  })
+}
+
 // app.use(favicon(__dirname + "/public/images/curio_square.png"));
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
